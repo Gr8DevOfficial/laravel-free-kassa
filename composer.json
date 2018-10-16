@@ -1,0 +1,24 @@
+{
+    "name": "gr8devofficial/laravel-free-kassa",
+    "authors": [{
+        "name": "Gr8dev",
+        "email": "support@gr8dev.com"
+    }],
+    "autoload": {
+        "psr-4": {
+            "Gr8devofficial\\LaravelFreecassa\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "ext-xml": "*",
+        "guzzlehttp/guzzle": "^6.3@dev"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Gr8devofficial\\LaravelFreecassa\\ServiceProvider"
+            ]
+        }
+    }
+}
