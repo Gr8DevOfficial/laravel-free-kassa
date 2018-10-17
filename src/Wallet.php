@@ -2,9 +2,11 @@
 
 namespace Gr8devofficial\LaravelFreecassa;
 
+use Illuminate\Support\Facades\Config;
+use GuzzleHttp\Client;
+
 class Wallet
 {
-
     const BASE_URL = 'https://www.fkwallet.ru/api_v1.php';
 
     /**
@@ -12,6 +14,8 @@ class Wallet
      * @var string
      */
     protected $walletId;
+    protected $client;
+    protected $config;
 
     public function __construct()
     {
@@ -24,13 +28,19 @@ class Wallet
         $this->walletId = $this->config['wallet_id'];
     }
 
-    protected function post($data){
+    /**
+     * Make POST request with given data to API
+     * @param  array $data      Request parameters array
+     * @return Collection       Request result
+     */
+    protected function post($data)
+    {
         try {
-            $result = $this->client->post('api_v1.php', $data);
+            $result = $this->client->request('POST', self::BASE_URL, ['form_params'=>$data]);
         } catch (\Exception $e) {
-            return null;
+            return $e->getMessage();
         }
-        return json_decode($result->getBody());
+        return json_decode($result->getBody()->getContents());
     }
 
     /**
@@ -54,13 +64,14 @@ class Wallet
     }
 
     /**
-     *
-     * @param  integer $serviceId
-     * @param  string $account
-     * @param  float $amount
-     * @return mixed            Payment ID or null
+     * Make online payment to some service
+     * @param  integer $serviceId       Id of service. Get it from providers() method.
+     * @param  string $account          Id of account in service
+     * @param  float $amount            Payment amount
+     * @return Collection
      */
-    public function onlinePayment($serviceId, $account, $amount){
+    public function onlinePayment(integer $serviceId, string $account, float $amount)
+    {
         $data = [
             'wallet_id' => $this->walletId,
             'service_id' => $serviceId,
@@ -73,11 +84,11 @@ class Wallet
     }
 
     /**
-     * get status for payment
-     * @param  integer $paymentId
+     * Get status for chashout payment
+     * @param  integer $paymentId       Id of cashout payment
      * @return Collection
      */
-    public function getPaymentStatus($paymentId)
+    public function getPaymentStatus(integer $paymentId)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -86,14 +97,15 @@ class Wallet
             'action' => 'get_payment_status',
         ];
         $result = $this->post($data);
+        return $result;
     }
 
     /**
-     *
-     * @param  integer $paymentId
+     * Get status of online payment
+     * @param  integer $paymentId       Id of payment made by onlinePayment() method
      * @return Collection
      */
-    public function checkOnlinePayment($paymentId)
+    public function checkOnlinePayment(integer $paymentId)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -105,7 +117,7 @@ class Wallet
     }
 
     /**
-     * get providers list
+     * Get service providers list avaliable for online payment
      * @return Collection
      */
     public function providers()
@@ -116,13 +128,16 @@ class Wallet
             'action' => 'providers',
         ];
         $result = $this->post($data);
+        return $result;
     }
 
     /**
-     * get providers list
+     * Transfer to other Freekassa wallets
+     * @param  string $purse        Id of Freekassa wallet for transfer
+     * @param  float  $amount       Amount to transfer
      * @return Collection
      */
-    public function transfer($purse, $amount)
+    public function transfer(string $purse, float $amount)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -131,10 +146,11 @@ class Wallet
             'action' => 'transfer',
         ];
         $result = $this->post($data);
+        return $result;
     }
 
     /**
-     * get providers list
+     * Get account's wallets balance
      * @return Collection
      */
     public function getBalance()
@@ -145,6 +161,99 @@ class Wallet
             'action' => 'get_balance',
         ];
         $result = $this->post($data);
+        return $result;
+    }
+
+    /**
+     * Cashout to differerent pay systems
+     * @param  string  $currency         String key for payment system. See freekassa.php config file.
+     * @param  string  $purse            Destination wallet id
+     * @param  decimal $amount           Cashout amount
+     * @param  string  $desc             Optional description
+     * @param  integer $disable_exchange Disable automatic exchange
+     * @return Collection
+     */
+    public function cashout(string $currency, string $purse, float $amount, string $desc = null, boolean $disable_exchange = null)
+    {
+        if (!isset($this->config['cashout_currencies'][$currency])) {
+            throw new \Exception('Incorrect currency string key!');
+        } else {
+            $currencyCode = $this->config['cashout_currencies'][$currency];
+        }
+        $data = [
+            'wallet_id' => $this->walletId,
+            'purse' => $purse,
+            'amount' => $amount,
+            'desc' => $desc ?: '',
+            'disable_exchange' => $disable_exchange ?: 0,
+            'currency' => $currencyCode,
+            'sign' => md5($this->walletId.$currencyCode.$amount.$purse.$this->config['api_key']),
+            'action' => 'cashout',
+        ];
+        $result = $this->post($data);
+        return $result;
+    }
+
+    /**
+     * Create Crypto currency address
+     * @param  string $currency  Crypto currency type. See avaliable types in freekassa.php config file
+     * @return Collection
+     */
+    public function createCryptoAddress(string $currency)
+    {
+        $currencies = $this->config['crypto_currencies'];
+        if (!in_array($currency, $currencies)) {
+            throw new \Exception('Incorrect crypto currency!');
+        }
+        $data = [
+            'wallet_id' => $this->walletId,
+            'sign' => md5($this->walletId.$this->config['api_key']),
+            'action' => 'create_'.$currency.'_address',
+        ];
+        $result = $this->post($data);
+        return $result;
+    }
+
+    /**
+     * Get Crypto currency address
+     * @param  string $currency  Crypto currency type. See avaliable types in freekassa.php config file
+     * @return Collection
+     */
+    public function getCryptoAddress(string $currency)
+    {
+        $currencies = $this->config['crypto_currencies'];
+        if (!in_array($currency, $currencies)) {
+            throw new \Exception('Incorrect crypto currency!');
+        }
+        $data = [
+            'wallet_id' => $this->walletId,
+            'sign' => md5($this->walletId.$this->config['api_key']),
+            'action' => 'get_'.$currency.'_address',
+        ];
+        $result = $this->post($data);
+        return $result;
+    }
+
+    /**
+     * Get Crypto currency transaction info
+     * @param  string $currency         Crypto currency type. See avaliable types in freekassa.php config file
+     * @param  string $transactionId    Crypto currency transaction ID
+     * @return Collection
+     */
+    public function getCryptoAddress(string $currency, string $transactionId)
+    {
+        $currencies = $this->config['crypto_currencies'];
+        if (!in_array($currency, $currencies)) {
+            throw new \Exception('Incorrect crypto currency!');
+        }
+        $data = [
+            'wallet_id' => $this->walletId,
+            'transaction_id' => $transactionId,
+            'sign' => md5($this->walletId.$transactionId.$this->config['api_key']),
+            'action' => 'get_'.$currency.'_transaction',
+        ];
+        $result = $this->post($data);
+        return $result;
     }
 
 }
