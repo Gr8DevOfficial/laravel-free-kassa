@@ -48,7 +48,7 @@
             'TELE2_MOBILE' => '132',
             'BEELINE_MOBILE' => '83',
             'VISA_MASTERCARD_INT' => '158',
-            'VISA_UAH_CASHOUT' => 157,
+            'VISA_UAH_CASHOUT' => '157',
             'PAYPAL' => '70',
             'ADVCASH_USD' => '136',
             'ADVCASH_RUB' =>  '150'
