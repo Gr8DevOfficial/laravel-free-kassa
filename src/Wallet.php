@@ -81,6 +81,7 @@ class Wallet
             'action' => 'online_payment',
         ];
         $result = $this->post($data);
+        return $result;
     }
 
     /**
@@ -114,6 +115,7 @@ class Wallet
             'action' => 'check_online_payment',
         ];
         $result = $this->post($data);
+        return $result;
     }
 
     /**
