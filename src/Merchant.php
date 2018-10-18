@@ -100,7 +100,7 @@ class Merchant
     public function checkOrderStatus($orderId = null, $intid = null)
     {
         $data = [
-            'action' => 'get_balance',
+            'action' => 'check_order_status',
         ];
         if ($orderId) {
             $data['order_id'] = $orderId;
