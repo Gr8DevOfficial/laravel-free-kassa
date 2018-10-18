@@ -8,7 +8,6 @@ use SimpleXMLElement;
 
 class Merchant
 {
-
     const BASE_URL = 'http://www.free-kassa.ru/api.php';
 
     /**
@@ -31,15 +30,16 @@ class Merchant
     /**
      *
      * @param  array $data
-     * @return SimpleXMLElement
+     * @return mixed SimpleXMLElement or string
      */
-    protected function get($data){
+    protected function get($data)
+    {
         try {
             $result = $this->client->get(null, [
                 'query' => $data
             ]);
         } catch (\Exception $e) {
-            return null;
+            return $e->getMessage();
         }
         return new SimpleXMLElement((string)$result->getBody());
     }
@@ -66,9 +66,10 @@ class Merchant
 
     /**
      *
-     * @return SimpleXMLElement
+     * @return mixed SimpleXMLElement or string
      */
-    public function getBalance(){
+    public function getBalance()
+    {
         $data = [
             'merchant_id' => $this->merchantId,
             's' => md5($this->merchantId.$this->config['secret2']),
@@ -77,4 +78,26 @@ class Merchant
         return $this->get($data);
     }
 
+    /**
+     *
+     * @param  mixed $orderId integer or null
+     * @param  mixed $intid string or null
+     * @return mixed SimpleXMLElement or false
+     */
+    public function checkOrderStatus($orderId = null, $intid = null)
+    {
+        $data = [
+            'merchant_id' => $this->merchantId,
+            's' => md5($this->merchantId.$this->config['secret2']),
+            'action' => 'get_balance',
+        ];
+        if ($orderId) {
+            $data['order_id'] = $orderId;
+        } elseif ($intid) {
+            $data['intid'] = $intid;
+        } else {
+            return false;
+        }
+        return $this->get($data);
+    }
 }

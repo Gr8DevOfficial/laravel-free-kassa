@@ -80,8 +80,7 @@ class Wallet
             'sign' => md5($this->walletId.$account.$amount.$this->config['api_key']),
             'action' => 'online_payment',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -97,8 +96,7 @@ class Wallet
             'sign' => md5($this->walletId.$paymentId.$this->config['api_key']),
             'action' => 'get_payment_status',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -114,8 +112,7 @@ class Wallet
             'sign' => md5($this->walletId.$paymentId.$this->config['api_key']),
             'action' => 'check_online_payment',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -129,8 +126,7 @@ class Wallet
             'sign' => md5($this->walletId.$this->config['api_key']),
             'action' => 'providers',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -147,8 +143,7 @@ class Wallet
             'sign' => md5($this->walletId.$amount.$purse.$this->config['api_key']),
             'action' => 'transfer',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -162,8 +157,7 @@ class Wallet
             'sign' => md5($this->walletId.$this->config['api_key']),
             'action' => 'get_balance',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -192,8 +186,7 @@ class Wallet
             'sign' => md5($this->walletId.$currencyCode.$amount.$purse.$this->config['api_key']),
             'action' => 'cashout',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -212,8 +205,7 @@ class Wallet
             'sign' => md5($this->walletId.$this->config['api_key']),
             'action' => 'create_'.$currency.'_address',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -232,8 +224,7 @@ class Wallet
             'sign' => md5($this->walletId.$this->config['api_key']),
             'action' => 'get_'.$currency.'_address',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
     /**
@@ -254,8 +245,7 @@ class Wallet
             'sign' => md5($this->walletId.$transactionId.$this->config['api_key']),
             'action' => 'get_'.$currency.'_transaction',
         ];
-        $result = $this->post($data);
-        return $result;
+        return $this->post($data);
     }
 
 }
