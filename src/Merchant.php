@@ -8,8 +8,18 @@ use SimpleXMLElement;
 
 class Merchant
 {
-
     const BASE_URL = 'http://www.free-kassa.ru/api.php';
+
+    protected $paymentCurrencies = [
+        'ooopay',
+        'yandex',
+        'qiwi',
+        'card',
+        'wmr',
+        'wmz',
+        'fkw',
+        'cardint'
+    ];
 
     /**
      *
@@ -31,15 +41,20 @@ class Merchant
     /**
      *
      * @param  array $data
-     * @return SimpleXMLElement
+     * @return mixed SimpleXMLElement or string
      */
-    protected function get($data){
+    protected function get($data)
+    {
+        $data = array_merge($data, [
+            'merchant_id' => $this->merchantId,
+            's' => $this->makeSign()
+        ]);
         try {
             $result = $this->client->get(null, [
                 'query' => $data
             ]);
         } catch (\Exception $e) {
-            return null;
+            return $e->getMessage();
         }
         return new SimpleXMLElement((string)$result->getBody());
     }
@@ -66,15 +81,58 @@ class Merchant
 
     /**
      *
-     * @return SimpleXMLElement
+     * @return mixed SimpleXMLElement or string
      */
-    public function getBalance(){
+    public function getBalance()
+    {
         $data = [
-            'merchant_id' => $this->merchantId,
-            's' => md5($this->merchantId.$this->config['secret2']),
             'action' => 'get_balance',
         ];
         return $this->get($data);
     }
 
+    /**
+     *
+     * @param  mixed $orderId integer or null
+     * @param  mixed $intid string or null
+     * @return mixed SimpleXMLElement or false
+     */
+    public function checkOrderStatus($orderId = null, $intid = null)
+    {
+        $data = [
+            'action' => 'check_order_status',
+        ];
+        if ($orderId) {
+            $data['order_id'] = $orderId;
+        } elseif ($intid) {
+            $data['intid'] = $intid;
+        } else {
+            throw new Exception('order_id or intid must be filled');
+        }
+        return $this->get($data);
+    }
+
+    /**
+     *
+     * @param  string $currency
+     * @param  float $intid
+     * @return mixed SimpleXMLElement or string
+     */
+    public function payment($currency, $amount)
+    {
+        if(!in_array($currency, $this->paymentCurrencies)){
+            throw new Exception('Currency not found');
+        }
+        $data = [
+            'currency' => $currency,
+            'amount' => $amount,
+            'action' => 'payment',
+        ];
+        return $this->get($data);
+    }
+
+    protected function makeSign()
+    {
+        return md5($this->merchantId.$this->config['secret2']);
+    }
 }

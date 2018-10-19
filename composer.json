@@ -9,7 +9,6 @@
             "Gr8devofficial\\LaravelFreecassa\\": "src/"
         }
     },
-    "minimum-stability": "dev",
     "require": {
         "ext-xml": "*",
         "guzzlehttp/guzzle": "^6.3@dev"
