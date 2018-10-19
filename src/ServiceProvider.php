@@ -11,7 +11,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
-
+        $this->publishes([
+            __DIR__.'/../config/freekassa.php' => config_path('freekassa.php'),
+        ]);
     }
 
     /**
@@ -21,7 +23,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
-        $this->loadRoutesFrom(__DIR__.'/routes.php');
         $configPath = __DIR__ . '/../config/freekassa.php';
         $this->mergeConfigFrom($configPath, 'freekassa');
     }
