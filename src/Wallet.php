@@ -48,7 +48,7 @@ class Wallet
      * @param string $value
      * @return Wallet
      */
-    public function setWalletId(string $value)
+    public function setWalletId($value)
     {
         $this->walletId = $value;
         return this;
@@ -70,7 +70,7 @@ class Wallet
      * @param  float $amount            Payment amount
      * @return Collection
      */
-    public function onlinePayment(integer $serviceId, string $account, float $amount)
+    public function onlinePayment($serviceId, $account, $amount)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -88,7 +88,7 @@ class Wallet
      * @param  integer $paymentId       Id of cashout payment
      * @return Collection
      */
-    public function getPaymentStatus(integer $paymentId)
+    public function getPaymentStatus($paymentId)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -104,7 +104,7 @@ class Wallet
      * @param  integer $paymentId       Id of payment made by onlinePayment() method
      * @return Collection
      */
-    public function checkOnlinePayment(integer $paymentId)
+    public function checkOnlinePayment($paymentId)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -135,7 +135,7 @@ class Wallet
      * @param  float  $amount       Amount to transfer
      * @return Collection
      */
-    public function transfer(string $purse, float $amount)
+    public function transfer($purse, $amount)
     {
         $data = [
             'wallet_id' => $this->walletId,
@@ -169,7 +169,7 @@ class Wallet
      * @param  integer $disable_exchange Disable automatic exchange
      * @return Collection
      */
-    public function cashout(string $currency, string $purse, float $amount, string $desc = null, boolean $disable_exchange = null)
+    public function cashout($currency, $purse, $amount, $desc = null, $disable_exchange = null)
     {
         if (!isset($this->config['cashout_currencies'][$currency])) {
             throw new \Exception('Incorrect currency string key!');
@@ -194,7 +194,7 @@ class Wallet
      * @param  string $currency  Crypto currency type. See avaliable types in freekassa.php config file
      * @return Collection
      */
-    public function createCryptoAddress(string $currency)
+    public function createCryptoAddress($currency)
     {
         $currencies = $this->config['crypto_currencies'];
         if (!in_array($currency, $currencies)) {
@@ -213,7 +213,7 @@ class Wallet
      * @param  string $currency  Crypto currency type. See avaliable types in freekassa.php config file
      * @return Collection
      */
-    public function getCryptoAddress(string $currency)
+    public function getCryptoAddress($currency)
     {
         $currencies = $this->config['crypto_currencies'];
         if (!in_array($currency, $currencies)) {
@@ -233,7 +233,7 @@ class Wallet
      * @param  string $transactionId    Crypto currency transaction ID
      * @return Collection
      */
-    public function getCryptoInfo(string $currency, string $transactionId)
+    public function getCryptoInfo($currency, $transactionId)
     {
         $currencies = $this->config['crypto_currencies'];
         if (!in_array($currency, $currencies)) {
