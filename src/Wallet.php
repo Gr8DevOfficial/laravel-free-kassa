@@ -242,7 +242,7 @@ class Wallet
      * @param  string $transactionId    Crypto currency transaction ID
      * @return Collection
      */
-    public function getCryptoAddress(string $currency, string $transactionId)
+    public function getCryptoInfo(string $currency, string $transactionId)
     {
         $currencies = $this->config['crypto_currencies'];
         if (!in_array($currency, $currencies)) {
