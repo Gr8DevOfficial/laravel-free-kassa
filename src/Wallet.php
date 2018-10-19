@@ -31,7 +31,7 @@ class Wallet
     /**
      * Make POST request with given data to API
      * @param  array $data      Request parameters array
-     * @return Collection       Request result
+     * @return Object      Request result
      */
     protected function post($data)
     {
@@ -40,7 +40,7 @@ class Wallet
         } catch (\Exception $e) {
             return $e->getMessage();
         }
-        return collect(json_decode($result->getBody()->getContents()));
+        return json_decode($result->getBody()->getContents());
     }
 
     /**
@@ -68,7 +68,7 @@ class Wallet
      * @param  integer $serviceId       Id of service. Get it from providers() method.
      * @param  string $account          Id of account in service
      * @param  float $amount            Payment amount
-     * @return Collection
+     * @return Object
      */
     public function onlinePayment($serviceId, $account, $amount)
     {
@@ -86,7 +86,7 @@ class Wallet
     /**
      * Get status for chashout payment
      * @param  integer $paymentId       Id of cashout payment
-     * @return Collection
+     * @return Object
      */
     public function getPaymentStatus($paymentId)
     {
@@ -102,7 +102,7 @@ class Wallet
     /**
      * Get status of online payment
      * @param  integer $paymentId       Id of payment made by onlinePayment() method
-     * @return Collection
+     * @return Object
      */
     public function checkOnlinePayment($paymentId)
     {
@@ -117,7 +117,7 @@ class Wallet
 
     /**
      * Get service providers list avaliable for online payment
-     * @return Collection
+     * @return Object
      */
     public function providers()
     {
@@ -133,7 +133,7 @@ class Wallet
      * Transfer to other Freekassa wallets
      * @param  string $purse        Id of Freekassa wallet for transfer
      * @param  float  $amount       Amount to transfer
-     * @return Collection
+     * @return Object
      */
     public function transfer($purse, $amount)
     {
@@ -148,7 +148,7 @@ class Wallet
 
     /**
      * Get account's wallets balance
-     * @return Collection
+     * @return Object
      */
     public function getBalance()
     {
@@ -167,7 +167,7 @@ class Wallet
      * @param  decimal $amount           Cashout amount
      * @param  string  $desc             Optional description
      * @param  integer $disable_exchange Disable automatic exchange
-     * @return Collection
+     * @return Object
      */
     public function cashout($currency, $purse, $amount, $desc = null, $disable_exchange = null)
     {
@@ -192,7 +192,7 @@ class Wallet
     /**
      * Create Crypto currency address
      * @param  string $currency  Crypto currency type. See avaliable types in freekassa.php config file
-     * @return Collection
+     * @return Object
      */
     public function createCryptoAddress($currency)
     {
@@ -211,7 +211,7 @@ class Wallet
     /**
      * Get Crypto currency address
      * @param  string $currency  Crypto currency type. See avaliable types in freekassa.php config file
-     * @return Collection
+     * @return Object
      */
     public function getCryptoAddress($currency)
     {
@@ -231,7 +231,7 @@ class Wallet
      * Get Crypto currency transaction info
      * @param  string $currency         Crypto currency type. See avaliable types in freekassa.php config file
      * @param  string $transactionId    Crypto currency transaction ID
-     * @return Collection
+     * @return Object
      */
     public function getCryptoInfo($currency, $transactionId)
     {
