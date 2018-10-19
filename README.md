@@ -24,6 +24,8 @@ $balance = (new Merchant)->getBalance();
 use Gr8devofficial\LaravelFreecassa\Merchant;
 
 $status = (new Merchant)->checkOrderStatus($orderId);
+//Или используя intid
+$status = (new Merchant)->checkOrderStatus(null, $intid);
 ```
 Метод для вывода средств:
 ```php
