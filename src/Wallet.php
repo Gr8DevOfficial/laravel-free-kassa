@@ -40,7 +40,7 @@ class Wallet
         } catch (\Exception $e) {
             return $e->getMessage();
         }
-        return json_decode($result->getBody()->getContents());
+        return collect(json_decode($result->getBody()->getContents()));
     }
 
     /**
