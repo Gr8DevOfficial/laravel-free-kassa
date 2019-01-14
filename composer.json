@@ -1,5 +1,7 @@
 {
     "name": "gr8devofficial/laravel-free-kassa",
+    "description": "free-kassa.ru API package for laravel",
+    "keywords": ["framework", "laravel", "free-kassa.ru", "freekassa", "free-kassa"],
     "authors": [{
         "name": "Gr8dev",
         "email": "support@gr8dev.com"
